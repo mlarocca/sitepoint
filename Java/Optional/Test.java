@@ -100,3 +100,25 @@ public class Test {
   }
   
 }
+
+private static void testOrElse() {
+  // You might think if we use `orElse` we can prevent `map` from breaking associativity law
+  opt.map(f).map(g).orElse("no value");   // "no value"
+  opt.map(x -> g.apply(f.apply(x)));  	  // "no value"
+
+  //This solution only hides the problem, as shown by this counter example:
+
+  Function<Integer, Integer> f = x -> (x % 2 == 0) ? null : x;
+  Function<Integer, String> g = y -> y == null ?  "g says it's null" : (y % 3 == 0) ? null : ((Integer)(y * y)).toString();
+  Function<String, String> h = z -> z == null ? "h says it's null" : z;
+   
+  Optional<Integer> opt1 = Optional.of(2);  // A value that f maps to null - this breaks .map
+  Optional<Integer> opt2 = Optional.of(3);  // A value that g maps to null - this breaks .map
+   
+  System.out.println(opt1.map(f).map(g).map(h).orElse("it's null, says who?"));                       	// "it's null, says who?"
+  System.out.println(opt1.map(x -> h.apply(g.apply(f.apply(x)))).orElse("it's null, says who?"));     	// "g says it's null"
+   
+  System.out.println(opt2.map(f).map(g).map(h).orElse("it's null, says who?"));                       	// "it's null, says who?"
+  System.out.println(opt2.map(x -> h.apply(g.apply(f.apply(x)))).orElse("it's null, says who?"));     	// "h says it's null"
+  }
+}
