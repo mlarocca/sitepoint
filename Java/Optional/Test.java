@@ -69,7 +69,7 @@ public class Test {
     }
 
     /**
-     * This is the first solution we can come up with to cope with the way `Optional` is designed.
+     * This is the first solution we came up with to cope with `Optional` breaking the Monad laws.
      * We need to re-engineer the functions in the Optional-map-chain so that they won't treat `null` as a special case,
      * and that they use `Optional` for both their inputs and outputs.
      */
